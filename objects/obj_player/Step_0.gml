@@ -3,18 +3,16 @@ var _sub_pixel = .5;
 
 
 #region Get Inputs
-var _right_key = keyboard_check(vk_right);
-var _left_key = keyboard_check(vk_left);
-var _jump_key_pressed = keyboard_check_pressed(vk_space);
+	get_controls();
 #endregion
 
-#region X Movement Direction
-	move_dir = _right_key - _left_key;
+
+#region X Collision and Movement
+	//X Movement
+	move_dir = right_key - left_key;
 	x_spd = move_dir * move_spd;
-#endregion
 
-#region X Collision
-
+	//X Collision
 	if(place_meeting(x + x_spd, y, obj_wall))
 	{
 		//Scoot up to wall precisely
@@ -31,18 +29,41 @@ var _jump_key_pressed = keyboard_check_pressed(vk_space);
 #endregion
 
 
-#region Y movement
+#region Y Collision and Movement
 	//gravity
 		y_spd += grav;
-
-	//Jump
-	if(_jump_key_pressed && place_meeting(x, y + 1, obj_wall))
+	//Cap falling speed
+	if(y_spd > term_vel) { y_spd = term_vel;}
+	//Reset/Prepare jump count
+	if(on_ground)
 	{
+		jump_count = 0;
+	}
+	else
+	{
+		//if the player is in the air dont do extra jump
+		if(jump_count = 0)
+		{
+			jump_count = 1;
+		}
+	}
+	
+	
+	//Jump
+	if(jump_key_buffered && jump_count < jump_max)
+	{
+		//Reset the timer
+		jump_key_buffered = false;
+		jump_key_buffer_timer = 0;
+		
+		//Increase the number of performed jumps
+		jump_count++;
+		
+		//set yspd to jump speed
 		y_spd = jump_spd;
 	}
-
-	
-	if(place_meeting(x, y+y_spd,obj_wall))
+	//Y Collision
+	if(place_meeting(x, y + y_spd, obj_wall))
 	{
 		//Scoot up  to the wall precisesly
 		var _pixel_check = _sub_pixel * sign(y_spd);
@@ -56,9 +77,16 @@ var _jump_key_pressed = keyboard_check_pressed(vk_space);
 		y_spd = 0;
 	}
 	
-	
-	
+	if(y_spd >= 0 && place_meeting(x, y+1, obj_wall))
+	{
+		on_ground = true;
+	}
+	else{
+		on_ground = false;
+	}
+
 #endregion
+
 
 
 #region Move Player
