@@ -23,6 +23,9 @@ function get_controls()
 	jump_key = keyboard_check(vk_space) + gamepad_button_check(0, gp_face1);
 	jump_key = clamp(jump_key, 0, 1);
 	
+	jump_key_released = keyboard_check_released(vk_space) + gamepad_button_check_released(0, gp_face1);
+	jump_key_released = clamp(jump_key_released, 0, 1);
+	
 	//Jump key buffering
 	if(jump_key_pressed)
 	{
@@ -38,5 +41,6 @@ function get_controls()
 	{
 		jump_key_buffered = false;
 	}
+
 
 }
