@@ -1,5 +1,6 @@
 //@description input functions
 
+/// @desc Setup some control values
 function controls_setup()
 {
 	jump_buffer_time = 3;
@@ -8,6 +9,9 @@ function controls_setup()
 }
 
 
+/**
+ * Get Player Controls
+ */
 function get_controls()
 {	//movement
 	right_key = keyboard_check(ord("D")) + keyboard_check(vk_right) + gamepad_button_check(0, gp_padr);
