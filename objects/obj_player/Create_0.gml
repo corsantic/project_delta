@@ -17,9 +17,22 @@ function set_on_ground(_val = true)
 
 controls_setup();
 
+#region Sprites
+sprites = {	idle: spr_player_idle, walk: spr_player_walk,
+			run: spr_player_run, jump: spr_player_jump, 
+			crouch: spr_player_crouch};
+
+
+
+#endregion
+
+
 #region Moving
+	face = 1;
 	move_dir = 0;
-	move_spd = 2;
+	move_spd[PLAYER_RUN_TYPE.WALK] = 2;
+	move_spd[PLAYER_RUN_TYPE.RUN] = 3.5;
+	run_type = PLAYER_RUN_TYPE.WALK;
 	x_spd = 0;
 	y_spd = 0;
 #endregion

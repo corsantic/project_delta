@@ -10,7 +10,22 @@ var _sub_pixel = .5;
 #region X Collision and Movement
 	//X Movement
 	move_dir = right_key - left_key;
-	x_spd = move_dir * move_spd;
+	x_spd = move_dir * move_spd[run_type];
+	
+	if(run_key_check)
+	{
+		run_type = PLAYER_RUN_TYPE.RUN;
+	}
+	else
+	{
+		run_type = PLAYER_RUN_TYPE.WALK;
+	}
+	
+	//Get my face
+	if(move_dir != 0 )
+	{
+		face = move_dir;
+	}
 
 	//X Collision
 	if(place_meeting(x + x_spd, y, obj_wall))
@@ -136,6 +151,37 @@ var _sub_pixel = .5;
 	y += y_spd;
 #endregion
 
+
+
+#region Sprite Control
+	//walking
+	if (abs(x_spd) > 0) {
+		//check run_type
+		switch(run_type)
+		{
+			case PLAYER_RUN_TYPE.RUN:
+				sprite_index = sprites.run;
+				break;
+			case PLAYER_RUN_TYPE.WALK:
+				//default is just walk so we dont break
+			default:
+				sprite_index = sprites.walk
+				break;
+		}
+	}
+	//not moving
+	if (x_spd == 0) {
+		sprite_index = sprites.idle;
+	}
+	//in the air
+	if (!on_ground) {
+		sprite_index = sprites.jump;
+	}
+	
+	
+	//set the collision mask
+	mask_index = sprites.idle;
+#endregion
 
 
 
