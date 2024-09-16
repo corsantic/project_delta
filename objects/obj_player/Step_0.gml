@@ -31,20 +31,33 @@ var _sub_pixel = .5;
 
 #region Y Collision and Movement
 	//gravity
-		y_spd += grav;
+		if(coyote_hang_timer > 0)
+		{
+			//Count down hang timer
+			coyote_hang_timer--;
+		}
+		else
+		{	//Apply gravity to the player
+			y_spd += grav;
+			//No long on the ground
+			set_on_ground(false);
+		}
+	
 	//Cap falling speed
-		if(y_spd > term_vel) { y_spd = term_vel;}
+		y_spd = clamp(y_spd, 0, term_vel);
 	#region Jump
 		//Reset/Prepare jump count
 			if(on_ground)
 			{
 				jump_count = 0;
 				jump_hold_timer = 0;
+				coyote_jump_timer = coyote_jump_frames;
 			}
 			else
 			{
 				//if the player is in the air dont do extra jump
-				if(jump_count = 0)
+				coyote_jump_timer--;
+				if(jump_count = 0 && coyote_jump_timer <= 0)
 				{
 					jump_count = 1;
 				}
@@ -62,6 +75,8 @@ var _sub_pixel = .5;
 		
 				//Set the jump hold timer
 				jump_hold_timer = jump_hold_frames[jump_count - 1];
+				
+				set_on_ground(false);
 			}
 		
 		//Cut of the jump by releasing the jump button
@@ -107,12 +122,9 @@ var _sub_pixel = .5;
 	
 		if(y_spd >= 0 && place_meeting(x, y+1, obj_wall))
 		{
-			on_ground = true;
+			set_on_ground(true);
 		}
-		else
-		{
-			on_ground = false;
-		}
+		
 	#endregion
 
 #endregion
