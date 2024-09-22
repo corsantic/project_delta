@@ -30,17 +30,33 @@ var _sub_pixel = .5;
 	//X Collision
 	if(place_meeting(x + x_spd, y, obj_wall))
 	{
-		//Scoot up to wall precisely
-		var _pixel_check = _sub_pixel * sign(x_spd);
-		
-		while(!place_meeting(x +_pixel_check, y, obj_wall))
+		//first check if there is a slope to go up
+		var _slop_pixel = 2;
+		if(!place_meeting(x + x_spd, y - abs(x_spd) - _slop_pixel, obj_wall))
 		{
-			x += _pixel_check;
-		}
+			while (place_meeting(x + x_spd, y, obj_wall))
+			{
+				y -= _sub_pixel;
+			}
 		
-		// set x_spd to zero to "collide"
-		x_spd = 0;
+		}
+		//if there is no sloop regular collison
+		else{
+		
+			//Scoot up to wall precisely
+			var _pixel_check = _sub_pixel * sign(x_spd);
+		
+			while(!place_meeting(x +_pixel_check, y, obj_wall))
+			{
+				x += _pixel_check;
+			}
+		
+			// set x_spd to zero to "collide"
+			x_spd = 0;
+		}
 	}
+		
+
 #endregion
 
 
