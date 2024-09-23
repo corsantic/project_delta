@@ -62,4 +62,8 @@ sprites = {	idle: spr_player_idle, walk: spr_player_walk,
 	
 #endregion
 
+//Pixel checks
+sub_pixel = .5;
+slope_pixel = 1;
+
 
