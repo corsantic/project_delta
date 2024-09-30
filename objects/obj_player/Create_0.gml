@@ -5,10 +5,13 @@ function set_on_ground(_val = true)
 	{
 		on_ground = true;
 		coyote_hang_timer = coyote_hang_frames;
+		//We set y_spd here but we can get back to it later
+		y_spd = 0;
 	}
 	else
 	{
 		on_ground = false;
+		my_floor_plat = noone;
 		coyote_hang_timer = 0;
 	}
 	
@@ -65,5 +68,11 @@ sprites = {	idle: spr_player_idle, walk: spr_player_walk,
 //Pixel checks
 sub_pixel = .5;
 slope_pixel = 1;
+
+#region Moving Platform
+	my_floor_plat = noone;
+	move_plat_x_spd = 0;
+
+#endregion
 
 
