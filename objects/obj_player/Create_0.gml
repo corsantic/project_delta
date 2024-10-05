@@ -18,6 +18,7 @@ function set_on_ground(_val = true)
 }
 
 
+
 controls_setup();
 
 #region Sprites
@@ -68,7 +69,7 @@ sprites = {	idle: spr_player_idle, walk: spr_player_walk,
 //Pixel checks
 sub_pixel = .5;
 slope_pixel = 1;
-
+ 
 #region Moving Platform
 	my_floor_plat = noone;
 	move_plat_x_spd = 0;

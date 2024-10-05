@@ -22,7 +22,7 @@
 	}
 	
 	//Get my face
-	if(move_dir != PLAYER_MOVE_DIR.STATIC_X )
+	if(move_dir != PLAYER_MOVE_DIR.STATIC_X)
 	{
 		face = move_dir;
 	}
@@ -59,7 +59,7 @@
 				while(!place_meeting(x + _pixel_check, y, obj_wall))
 				{
 					x += _pixel_check;
-				}
+				}	
 		
 				// set x_spd to zero to "collide"
 				x_spd = 0;
@@ -276,6 +276,79 @@
 
 	//Move Y
 	y += y_spd;
+
+#endregion
+
+#region Final Moving platform collision and movement
+	#region X - move plat x spd and collision
+		// get the move_plat_x_spd
+		move_plat_x_spd	= 0;
+		if(instance_exists(my_floor_plat))
+		{ 
+			move_plat_x_spd = my_floor_plat.x_spd;
+		}
+		
+		//Move with move_play_x_speed
+		if(place_meeting(x + move_plat_x_spd, y, obj_wall))
+		{
+			//Scoot up to wall precisely
+			var _pixel_check = sub_pixel * sign(move_plat_x_spd);
+		
+			while(!place_meeting(x + _pixel_check, y, obj_wall))
+			{
+				x += _pixel_check;
+			}	
+		
+			// set the move_plat_x_spd to 0 to finish collision
+			move_plat_x_spd = 0;
+		}
+	
+	//Move 
+		x += move_plat_x_spd;
+	#endregion
+
+
+
+	#region Y - Snap myself to my_floor_plat if its moving vertically
+	if(instance_exists(my_floor_plat) 
+	&& (my_floor_plat.y_spd != 0 
+	||  check_equal_or_ancestor(my_floor_plat.object_index, obj_semi_solid_move_plat))
+	)
+	{
+		//Snap to the top of the floor platform (un-floor our y variable so its not choppy)
+		if(!place_meeting(x, my_floor_plat.bbox_top, obj_wall) 
+			&& my_floor_plat.bbox_top >= bbox_bottom - term_vel)
+		{
+			
+			y = my_floor_plat.bbox_top;
+		}
+		
+		//Going up into a solid wall while on a semisolid platform
+		if(my_floor_plat.y_spd < 0 
+		&& place_meeting(x, y +my_floor_plat.y_spd, obj_wall))
+		{
+			//Get pushed down through the semisolid floor platform
+			if(check_equal_or_ancestor(my_floor_plat.object_index, obj_semi_solid_wall))
+			{
+				var _sub_pixel = .25;
+				//Get pushed down
+				while place_meeting(x, y + my_floor_plat.y_spd, obj_wall)
+				{
+					y += _sub_pixel;
+				}
+				//if we got pushed into a solid wall while going downwards, push ourselves back out
+				while place_meeting(x, y, obj_wall)
+				{
+					y -= _sub_pixel;
+				}
+				y = round(y);
+			}
+			//Cancel the my_floor_plat
+			set_on_ground(false);
+		}
+	
+	}
+	#endregion
 
 #endregion
 

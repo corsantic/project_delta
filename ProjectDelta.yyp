@@ -51,6 +51,7 @@
     {"id":{"name":"input_functions","path":"scripts/input_functions/input_functions.yy",},},
     {"id":{"name":"macros","path":"scripts/macros/macros.yy",},},
     {"id":{"name":"player_functions","path":"scripts/player_functions/player_functions.yy",},},
+    {"id":{"name":"util_scripts","path":"scripts/util_scripts/util_scripts.yy",},},
     {"id":{"name":"spr_player_crouch","path":"sprites/spr_player_crouch/spr_player_crouch.yy",},},
     {"id":{"name":"spr_player_idle","path":"sprites/spr_player_idle/spr_player_idle.yy",},},
     {"id":{"name":"spr_player_jump","path":"sprites/spr_player_jump/spr_player_jump.yy",},},
