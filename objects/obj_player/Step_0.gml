@@ -68,14 +68,19 @@
 		}
 	}
 	//Go Down Slopes
+	down_slope_semi_solid = noone;
 	if(y_spd >= 0 
-		&& !place_meeting(x + x_spd, y + 1, obj_wall) 
-		&& place_meeting(x + x_spd, y + abs(x_spd) + slope_pixel, obj_wall))
+		&&	!place_meeting(x + x_spd, y + 1, obj_wall) 
+		&&	place_meeting(x + x_spd, y + abs(x_spd) + slope_pixel, obj_wall))
 	{
-	
-		while (!place_meeting(x + x_spd, y + sub_pixel, obj_wall))
+		//Check for a semisolid in the way
+		down_slope_semi_solid = check_for_semi_solid_platform(x+ x_spd, y + abs(x_spd) + 1)
+		if(!instance_exists(down_slope_semi_solid))
 		{
-				y += sub_pixel;
+			while (!place_meeting(x + x_spd, y + sub_pixel, obj_wall))
+			{
+					y += sub_pixel;
+			}
 		}
 	}
 	
@@ -223,7 +228,7 @@
 				//Return a solid wall or any semisolid walls that are below the player
 				if (_instance_object_index == obj_wall 
 				|| object_is_ancestor(_instance_object_index, obj_wall))
-				|| floor(bbox_bottom) <= ceil(_instance.bbox_top - _instance.y_spd )
+				|| floor(bbox_bottom) <= ceil(_instance.bbox_top - _instance.y_spd)
 				{
 					//Return the "highest" wall object
 					if(!instance_exists(my_floor_plat)
@@ -239,6 +244,13 @@
 		
 		//Destroy the ds list to avoid memory leak
 		ds_list_destroy(_list);
+		
+		//Downslope semisolid for making sure wee dont miss semisolid's while going own slopes
+		if(instance_exists(down_slope_semi_solid))
+		{
+			my_floor_plat = down_slope_semi_solid;
+		}
+		
 		
 		
 		//One last check to make sure the floor platform is actually below us

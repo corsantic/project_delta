@@ -13,11 +13,43 @@ function set_on_ground(_val = true)
 		on_ground = false;
 		my_floor_plat = noone;
 		coyote_hang_timer = 0;
-	}
-	
+	}	
 }
 
+function check_for_semi_solid_platform(_x, _y)
+{
+	//Create a return variable
+	var _return_instance = noone;
+	
+	// We must not be moving upwards and then we check for a normal collision
+	if(y_spd >= 0 && place_meeting(_x, _y, obj_semi_solid_wall))
+	{
+		//Create a ds list to store all colliding instance of obj_semi_solid_wall
+		var _list = ds_list_create();
+		var _list_size = instance_place_list(_x, _y, obj_semi_solid_wall, _list, false);
+		//Loog through the colliding instances and only return one of it's top is below player
+		for(var _i = 0; _i < _list_size; _i++ )
+		{
+			//Get an instance from wall object list
+			var _instance = _list[| _i];
+			var _instance_object_index = _instance.object_index;
+			
+			if (floor(bbox_bottom) <= ceil(_instance.bbox_top - _instance.y_spd))
+			{
+				_return_instance = _instance;
+				//Exit the loop
+				break;
+			}
+		}
+		//Destroy for memory sake
+		ds_list_destroy(_list);
+	}
+	
+	
+	return _return_instance;
+}
 
+depth = -10;
 
 controls_setup();
 
@@ -73,6 +105,7 @@ slope_pixel = 1;
 #region Moving Platform
 	my_floor_plat = noone;
 	move_plat_x_spd = 0;
+	down_slope_semi_solid = noone;
 
 #endregion
 
