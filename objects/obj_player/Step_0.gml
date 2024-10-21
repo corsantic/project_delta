@@ -126,7 +126,10 @@
 			}
 	
 		//Initiate the Jump
-			if(jump_key_buffered && jump_count < jump_max)
+			var _floor_is_solid = false;
+			_floor_is_solid = (instance_exists(my_floor_plat) && check_equal_or_ancestor(my_floor_plat.object_index, obj_wall));
+			
+			if(jump_key_buffered && jump_count < jump_max  && (!down_key || _floor_is_solid))
 			{
 				//Reset the timer
 				jump_key_buffered = false;
@@ -214,12 +217,12 @@
 		var _list_size = instance_place_list(x, y+1+ _clamp_y_spd + term_vel, _wall_array, _list, false);
 		
 			/////(FIX for high resolution/high speed projects ) Check for a semisolid plat below me
-			var _y_check = y+1 + _clamp_y_spd;
+			var _y_check_for_res = y+1 + _clamp_y_spd;
 			if(instance_exists(my_floor_plat))
 			{
-				_y_check += max(0, my_floor_plat.y_spd);
+				_y_check_for_res += max(0, my_floor_plat.y_spd);
 			}
-			var _semi_solid = check_for_semi_solid_platform(x, _y_check);
+			var _semi_solid = check_for_semi_solid_platform(x, _y_check_for_res);
 		
 		
 		//Loop through the colliding instances and only return one if its top is bellow the player
@@ -230,7 +233,8 @@
 			var _instance_object_index = _instance.object_index;
 			
 			//Avoid magnetism
-			if((_instance.y_spd <= y_spd || instance_exists(my_floor_plat))
+			if( _instance != forget_semi_solid
+			&& (_instance.y_spd <= y_spd || instance_exists(my_floor_plat))
 			&& (_instance.y_spd > 0 || place_meeting(x, y+1 + _clamp_y_spd, _instance))
 			|| (_instance == _semi_solid)//HighRes Fix
 			) 
@@ -277,9 +281,9 @@
 			{
 				y += sub_pixel;
 			}
-			var my_floor_plat_obj_index = my_floor_plat.object_index;
-			if((my_floor_plat_obj_index == obj_semi_solid_wall)
-			|| object_is_ancestor(my_floor_plat_obj_index, obj_semi_solid_wall))
+			var _my_floor_plat_obj_index = my_floor_plat.object_index;
+			if((_my_floor_plat_obj_index == obj_semi_solid_wall)
+			|| object_is_ancestor(_my_floor_plat_obj_index, obj_semi_solid_wall))
 			{
 				while(place_meeting(x, y, my_floor_plat))
 				{
@@ -291,6 +295,36 @@
 			set_on_ground(true);
 		}
 		
+		#region Manually Fall Through a semisolid platform
+		if(down_key && jump_key_pressed)
+		{
+			//Make sure we have a floor platform thats a semisolid
+			if(instance_exists(my_floor_plat)
+			&& check_equal_or_ancestor(my_floor_plat.object_index, obj_semi_solid_wall))
+			{
+				// Check if we CAN go below the semisolid
+				var _y_check = max(1, my_floor_plat.y_spd + 1);
+				if(!place_meeting(x, y + _y_check, obj_wall))
+				{
+					//Move below the platform
+					y += 1;
+					
+					//Inherit any downward speed from my floor platform so it doesn't catch me
+					y_spd = _y_check - 1;
+					
+					//Forget this platform for a brief time so we dont get caught again
+					forget_semi_solid = my_floor_plat;
+					
+					//No more platform
+					set_on_ground(false);
+				}
+				
+			}
+			
+		}
+		
+		#endregion
+		
 	#endregion
 
 
@@ -298,6 +332,12 @@
 
 	//Move Y
 	y += y_spd;
+	
+	//Reset forget_semi_solid variable
+	if(instance_exists(forget_semi_solid) && !place_meeting(x, y, forget_semi_solid))
+	{	
+		forget_semi_solid = noone;
+	}
 
 #endregion
 
@@ -310,7 +350,7 @@
 			move_plat_x_spd = my_floor_plat.x_spd;
 		}
 		
-		//Move with move_play_x_speed
+		//Move with move_plat_x_speed
 		if(place_meeting(x + move_plat_x_spd, y, obj_wall))
 		{
 			//Scoot up to wall precisely

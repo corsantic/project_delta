@@ -34,7 +34,7 @@ function check_for_semi_solid_platform(_x, _y)
 			var _instance = _list[| _i];
 			var _instance_object_index = _instance.object_index;
 			
-			if (floor(bbox_bottom) <= ceil(_instance.bbox_top - _instance.y_spd))
+			if (_instance != forget_semi_solid && floor(bbox_bottom) <= ceil(_instance.bbox_top - _instance.y_spd))
 			{
 				_return_instance = _instance;
 				//Exit the loop
