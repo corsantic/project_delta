@@ -6,7 +6,7 @@
 	get_controls();
 #endregion
 
-#region //Get out of solid moveplats thave have positioned themselves into the player in the begin step
+#region Get out of solid moveplats thave have positioned themselves into the player in the begin step
 	var _right_wall = noone;
 	var _left_wall = noone;
 	var _bottom_wall = noone;
@@ -61,38 +61,64 @@
 	ds_list_destroy(_move_plat_place_list);
 	
 	//Get out of the walls
-		//Right Wall
-		if(instance_exists(_right_wall))
-		{
-			var _right_dist = bbox_right - x;
-			x = _right_wall.bbox_left - _right_dist;
-		}
-		//Left Wall
-		if(instance_exists(_left_wall))
-		{
-			var _left_dist = x - bbox_left;
-			x = _left_wall.bbox_right + _left_dist;
-		}
-		//Bottom Wall
-		if(instance_exists(_bottom_wall))
-		{
-			var _bottom_dist = bbox_bottom - y;
-			y = _bottom_wall.bbox_top - _bottom_dist;
+		var _target_x = x;
+		var _target_y = y;
+		//X Checks
+			//Right Wall
+			if(instance_exists(_right_wall))
+			{
+				var _right_dist = bbox_right - x;
+				_target_x = _right_wall.bbox_left - _right_dist;
+			}
+			//Left Wall
+			if(instance_exists(_left_wall))
+			{
+				var _left_dist = x - bbox_left;
+				_target_x = _left_wall.bbox_right + _left_dist;		
+			}
+			//Move x to target if not meeting a wall
+			if(!place_meeting(_target_x, y, obj_wall))
+			{
+				x = _target_x;
+			}
+		// Y Checks
+			//Bottom Wall
+			if(instance_exists(_bottom_wall))
+			{
+				var _bottom_dist = bbox_bottom - y;
+				_target_y = _bottom_wall.bbox_top - _bottom_dist;
 			
-		}
-		if(instance_exists(_top_wall))
-		{
-			var _up_dist =	y - bbox_top;
-			var _target_y = _top_wall.bbox_bottom + _up_dist;
-			//check if there isn't a wall in the way
+			}
+			//Top Wall
+			if(instance_exists(_top_wall))
+			{
+				var _up_dist =	y - bbox_top;
+				_target_y = _top_wall.bbox_bottom + _up_dist;
+			
+			}
+			//Move y to target if not meeting a wall
 			if(!place_meeting(x, _target_y, obj_wall))
 			{
 				y = _target_y;
 			}
-		}
 	
 	
 #endregion
+
+#region Don't get left behind by my move_plat!!
+	early_move_plat_x_spd = false;
+	if (instance_exists(my_floor_plat) && my_floor_plat.x_spd != 0 && !place_meeting(x, y + term_vel + 1, my_floor_plat))
+	{
+		//Go ahead and move outselves back onto that platform if there is no wall in the way
+		var _x_check = my_floor_plat.x_spd;
+		if(!place_meeting(x + _x_check, y, obj_wall))
+		{
+			x += _x_check;
+			early_move_plat_x_spd = true;
+		}
+	}
+#endregion
+
 
 #region X Collision and Movement
 	//X Movement
@@ -438,20 +464,23 @@
 		}
 		
 		//Move with move_plat_x_speed
-		if(place_meeting(x + move_plat_x_spd, y, obj_wall))
+		if(!early_move_plat_x_spd)	
 		{
-			//Scoot up to wall precisely
-			var _pixel_check = sub_pixel * sign(move_plat_x_spd);
-		
-			while(!place_meeting(x + _pixel_check, y, obj_wall))
+			if(place_meeting(x + move_plat_x_spd, y, obj_wall))
 			{
-				x += _pixel_check;
-			}	
+				//Scoot up to wall precisely
+				var _pixel_check = sub_pixel * sign(move_plat_x_spd);
 		
-			// set the move_plat_x_spd to 0 to finish collision
-			move_plat_x_spd = 0;
+				while(!place_meeting(x + _pixel_check, y, obj_wall))
+				{
+					x += _pixel_check;
+				}	
+		
+				// set the move_plat_x_spd to 0 to finish collision
+				move_plat_x_spd = 0;
+			}
 		}
-	
+		
 	//Move 
 		x += move_plat_x_spd;
 	#endregion
@@ -473,35 +502,65 @@
 			y = my_floor_plat.bbox_top;
 		}
 		
-		//Going up into a solid wall while on a semisolid platform
-		if(my_floor_plat.y_spd < 0 
-		&& place_meeting(x, y +my_floor_plat.y_spd, obj_wall))
-		{
-			//Get pushed down through the semisolid floor platform
-			if(check_equal_or_ancestor(my_floor_plat.object_index, obj_semi_solid_wall))
-			{
-				var _sub_pixel = .25;
-				//Get pushed down
-				while place_meeting(x, y + my_floor_plat.y_spd, obj_wall)
-				{
-					y += _sub_pixel;
-				}
-				//if we got pushed into a solid wall while going downwards, push ourselves back out
-				while place_meeting(x, y, obj_wall)
-				{
-					y -= _sub_pixel;
-				}
-				y = round(y);
-			}
-			//Cancel the my_floor_plat
-			set_on_ground(false);
-		}
-	
+		#region Made reduntant by code below delete later maybe?
+					//Going up into a solid wall while on a semisolid platform
+					//if(my_floor_plat.y_spd < 0 
+					//&& place_meeting(x, y +my_floor_plat.y_spd, obj_wall))
+					//{
+					//	//Get pushed down through the semisolid floor platform
+					//	if(check_equal_or_ancestor(my_floor_plat.object_index, obj_semi_solid_wall))
+					//	{
+					//		var _sub_pixel = .25;
+					//		//Get pushed down
+					//		while place_meeting(x, y + my_floor_plat.y_spd, obj_wall)
+					//		{
+					//			y += _sub_pixel;
+					//		}
+					//		//if we got pushed into a solid wall while going downwards, push ourselves back out
+					//		while place_meeting(x, y, obj_wall)
+					//		{
+					//			y -= _sub_pixel;
+					//		}
+					//		y = round(y);
+					//	}
+					//	//Cancel the my_floor_plat
+					//	set_on_ground(false);
+					//}
+		#endregion
 	}
 	#endregion
 
+	//Get pushed down through a semisolid by a moving solid platform
+	if(instance_exists(my_floor_plat)
+	&& (check_equal_or_ancestor(my_floor_plat.object_index, obj_semi_solid_wall))
+	&& place_meeting(x, y, obj_wall))
+	{
+		
+		//If i am already stuck in a wall at this point, try and move me down to get below a semisolid
+		//If i am still stuck afterwards, that just means I've been properly "crushed"
+		
+		//Also, don't check too far, we dont want to warp below walls
+		var _max_push_dist = 10;
+		var _pushed_dist = 0;
+		var _start_y = y;
+		
+		while (place_meeting(x,y, obj_wall) && _pushed_dist <= _max_push_dist)
+		{
+			y++;
+			_pushed_dist++;
+		}
+		//reset my_floor_plat
+		my_floor_plat = noone;
+		
+		//If i am still in a wall at this point, I've crushed regardless, take me back to my start y to avoid the funk
+		if (_pushed_dist > _max_push_dist)
+		{
+			y = _start_y;
+		}
+	}
+	
+	
 #endregion
-
 
 
 

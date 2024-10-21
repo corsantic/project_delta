@@ -103,6 +103,7 @@ sub_pixel = .5;
 slope_pixel = 1;
  
 #region Moving Platform
+	early_move_plat_x_spd = false;
 	my_floor_plat = noone;
 	move_plat_x_spd = 0;
 	down_slope_semi_solid = noone;

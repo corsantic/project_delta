@@ -40,6 +40,7 @@
     {"id":{"name":"obj_player","path":"objects/obj_player/obj_player.yy",},},
     {"id":{"name":"obj_semi_solid_move_plat","path":"objects/obj_semi_solid_move_plat/obj_semi_solid_move_plat.yy",},},
     {"id":{"name":"obj_semi_solid_wall","path":"objects/obj_semi_solid_wall/obj_semi_solid_wall.yy",},},
+    {"id":{"name":"obj_simple_move_plat","path":"objects/obj_simple_move_plat/obj_simple_move_plat.yy",},},
     {"id":{"name":"obj_slope_1","path":"objects/obj_slope_1/obj_slope_1.yy",},},
     {"id":{"name":"obj_slope_2","path":"objects/obj_slope_2/obj_slope_2.yy",},},
     {"id":{"name":"obj_slope_3","path":"objects/obj_slope_3/obj_slope_3.yy",},},
