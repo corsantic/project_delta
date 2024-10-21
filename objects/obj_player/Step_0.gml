@@ -213,6 +213,14 @@
 			//we check term_vel to because platforms can moves faster than player falling
 		var _list_size = instance_place_list(x, y+1+ _clamp_y_spd + term_vel, _wall_array, _list, false);
 		
+			/////(FIX for high resolution/high speed projects ) Check for a semisolid plat below me
+			var _y_check = y+1 + _clamp_y_spd;
+			if(instance_exists(my_floor_plat))
+			{
+				_y_check += max(0, my_floor_plat.y_spd);
+			}
+			var _semi_solid = check_for_semi_solid_platform(x, _y_check);
+		
 		
 		//Loop through the colliding instances and only return one if its top is bellow the player
 		for(var _i = 0; _i < _list_size; _i++)
@@ -223,7 +231,9 @@
 			
 			//Avoid magnetism
 			if((_instance.y_spd <= y_spd || instance_exists(my_floor_plat))
-			&& (_instance.y_spd > 0 || place_meeting(x, y+1 + _clamp_y_spd, _instance))) 
+			&& (_instance.y_spd > 0 || place_meeting(x, y+1 + _clamp_y_spd, _instance))
+			|| (_instance == _semi_solid)//HighRes Fix
+			) 
 			{
 				//Return a solid wall or any semisolid walls that are below the player
 				if (_instance_object_index == obj_wall 

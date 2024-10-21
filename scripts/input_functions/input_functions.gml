@@ -20,15 +20,20 @@ function get_controls()
 		gamepad_set_axis_deadzone(_gamepad, 0.5);
 		var _gamepad_right_key_check = gamepad_button_check(_gamepad, gp_padr) + gamepad_axis_value(_gamepad, gp_axislh) > 0;
 		var _gamepad_left_key_check =  gamepad_button_check(_gamepad, gp_padl) + gamepad_axis_value(_gamepad, gp_axislh) < 0;
+		var _gamepad_down_key_check =  gamepad_button_check(_gamepad, gp_padd) + gamepad_axis_value(_gamepad, gp_axislv) < 0;
 		//keyboard keys
 		var _keyboard_right_key_check = keyboard_check(ord("D")) + keyboard_check(vk_right);
 		var _keyboard_left_key_check =  keyboard_check(ord("A")) + keyboard_check(vk_left);
+		var _keyboard_down_key_check =  keyboard_check(ord("S")) + keyboard_check(vk_down);
 			
 		right_key =  _keyboard_right_key_check + _gamepad_right_key_check;
 		right_key = clamp(right_key, 0, 1);
 	
 		left_key = _keyboard_left_key_check + _gamepad_left_key_check;
 		left_key = clamp(left_key, 0, 1);
+		
+		down_key = _keyboard_down_key_check + _gamepad_down_key_check;
+		down_key = clamp(down_key, 0,1);
 	#endregion
 	
 	#region action
