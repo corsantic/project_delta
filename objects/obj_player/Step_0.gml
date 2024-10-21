@@ -6,6 +6,93 @@
 	get_controls();
 #endregion
 
+#region //Get out of solid moveplats thave have positioned themselves into the player in the begin step
+	var _right_wall = noone;
+	var _left_wall = noone;
+	var _bottom_wall = noone;
+	var _top_wall = noone;
+	var _move_plat_place_list = ds_list_create();
+	var _move_plat_place_list_size =  instance_place_list(x, y, obj_move_plat, _move_plat_place_list, false);
+
+
+	//Loop through all colliding move plats
+	for(var _i = 0; _i < _move_plat_place_list_size; _i++)
+	{
+		var _instance = _move_plat_place_list[| _i];
+		
+		//Find closest walls in each direction
+			//Right Walls
+			if((_instance.bbox_left - _instance.x_spd) >= bbox_right - 1)
+			{
+				if(!instance_exists(_right_wall) || (_instance.bbox_left < _right_wall.bbox_left))
+				{
+					_right_wall = _instance;
+				}
+			}
+			//Left walls
+			if((_instance.bbox_right - _instance.x_spd) <= bbox_left + 1 )
+			{
+				if(!instance_exists(_left_wall) || (_instance.bbox_right > _left_wall.bbox_right))
+				{
+					_left_wall = _instance;	
+				}
+			}
+			//Bottom wall
+			if(_instance.bbox_top - _instance.y_spd >= bbox_bottom - 1)
+			{
+				if(!instance_exists(_bottom_wall) || (_instance.bbox_top < _bottom_wall.bbox_top))
+				{
+					_bottom_wall = _instance;
+				}
+			}
+			//Top Wall
+			if(_instance.bbox_bottom - _instance.y_spd <= bbox_top + 1)
+			{
+				if(!instance_exists(_top_wall) || (_instance.bbox_bottom > _top_wall.bbox_bottom))
+				{
+					_top_wall = _instance;
+				}
+			
+			}
+			
+	}
+	
+	//destroy the ds list to free memory
+	ds_list_destroy(_move_plat_place_list);
+	
+	//Get out of the walls
+		//Right Wall
+		if(instance_exists(_right_wall))
+		{
+			var _right_dist = bbox_right - x;
+			x = _right_wall.bbox_left - _right_dist;
+		}
+		//Left Wall
+		if(instance_exists(_left_wall))
+		{
+			var _left_dist = x - bbox_left;
+			x = _left_wall.bbox_right + _left_dist;
+		}
+		//Bottom Wall
+		if(instance_exists(_bottom_wall))
+		{
+			var _bottom_dist = bbox_bottom - y;
+			y = _bottom_wall.bbox_top - _bottom_dist;
+			
+		}
+		if(instance_exists(_top_wall))
+		{
+			var _up_dist =	y - bbox_top;
+			var _target_y = _top_wall.bbox_bottom + _up_dist;
+			//check if there isn't a wall in the way
+			if(!place_meeting(x, _target_y, obj_wall))
+			{
+				y = _target_y;
+			}
+		}
+	
+	
+#endregion
 
 #region X Collision and Movement
 	//X Movement
@@ -374,6 +461,7 @@
 	#region Y - Snap myself to my_floor_plat if its moving vertically
 	if(instance_exists(my_floor_plat) 
 	&& (my_floor_plat.y_spd != 0 
+	|| check_equal_or_ancestor(my_floor_plat.object_index, obj_move_plat)
 	||  check_equal_or_ancestor(my_floor_plat.object_index, obj_semi_solid_move_plat))
 	)
 	{

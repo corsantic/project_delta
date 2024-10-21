@@ -36,6 +36,7 @@
   "name":"ProjectDelta",
   "resources":[
     {"id":{"name":"obj_camera","path":"objects/obj_camera/obj_camera.yy",},},
+    {"id":{"name":"obj_move_plat","path":"objects/obj_move_plat/obj_move_plat.yy",},},
     {"id":{"name":"obj_player","path":"objects/obj_player/obj_player.yy",},},
     {"id":{"name":"obj_semi_solid_move_plat","path":"objects/obj_semi_solid_move_plat/obj_semi_solid_move_plat.yy",},},
     {"id":{"name":"obj_semi_solid_wall","path":"objects/obj_semi_solid_wall/obj_semi_solid_wall.yy",},},
@@ -52,6 +53,7 @@
     {"id":{"name":"macros","path":"scripts/macros/macros.yy",},},
     {"id":{"name":"player_functions","path":"scripts/player_functions/player_functions.yy",},},
     {"id":{"name":"util_scripts","path":"scripts/util_scripts/util_scripts.yy",},},
+    {"id":{"name":"spr_move_plat","path":"sprites/spr_move_plat/spr_move_plat.yy",},},
     {"id":{"name":"spr_player_crouch","path":"sprites/spr_player_crouch/spr_player_crouch.yy",},},
     {"id":{"name":"spr_player_idle","path":"sprites/spr_player_idle/spr_player_idle.yy",},},
     {"id":{"name":"spr_player_jump","path":"sprites/spr_player_jump/spr_player_jump.yy",},},
