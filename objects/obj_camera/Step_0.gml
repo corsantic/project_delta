@@ -5,7 +5,7 @@ if(keyboard_check(vk_f7))
 }
 
 var _cam_position = set_cam_x_y(follow_object);
-
+if !(_cam_position) exit;
 
 //Set cam coordinates
 final_cam_x += (_cam_position.cam_x - final_cam_x) * cam_trail_speed;

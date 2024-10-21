@@ -76,11 +76,14 @@
 				var _left_dist = x - bbox_left;
 				_target_x = _left_wall.bbox_right + _left_dist;		
 			}
+			//TODO: add slope check here?
 			//Move x to target if not meeting a wall
 			if(!place_meeting(_target_x, y, obj_wall))
 			{
 				x = _target_x;
 			}
+			
+			
 		// Y Checks
 			//Bottom Wall
 			if(instance_exists(_bottom_wall))
@@ -444,7 +447,11 @@
 	#endregion
 
 	//Move Y
-	y += y_spd;
+	if(!place_meeting(x, y+y_spd, obj_wall))
+	{
+		y += y_spd;
+	}
+	
 	
 	//Reset forget_semi_solid variable
 	if(instance_exists(forget_semi_solid) && !place_meeting(x, y, forget_semi_solid))
@@ -561,6 +568,22 @@
 	
 	
 #endregion
+
+//Check if I'm "crushed"
+image_blend = c_white;
+if(place_meeting(x,y, obj_wall))
+{
+	image_blend = c_blue;
+	crush_timer++;
+	if(crush_timer >= crush_death_time)
+	{
+		instance_destroy();
+	}
+}
+else
+{
+	crush_timer = 0;
+}
 
 
 

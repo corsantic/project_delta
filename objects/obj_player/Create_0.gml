@@ -111,4 +111,8 @@ slope_pixel = 1;
 
 #endregion
 
+crush_timer = 0;
+crush_death_time =5;
+
+
 
