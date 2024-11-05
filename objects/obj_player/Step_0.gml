@@ -122,11 +122,50 @@
 	}
 #endregion
 
+#region Crouching
+	//Transition to crouch
+		//Manual
+		if(down_key && on_ground)
+		{
+			crouching = true;
+		}
+		//Forced / Automatic 
+		if(on_ground && place_meeting(x, y, obj_wall))
+		{
+			crouching = true;
+		}
+		
+		//Change collision mask
+		if(crouching)
+		{
+			mask_index = sprites.crouch;
+		}
+	//Transition out of crouching
+		//Manual
+		if(crouching && (!down_key || !on_ground))
+		{
+			//Check if i CAN uncrouch
+			mask_index = sprites.idle;
+			//Uncrouch if no solid wall in the way
+			if(!place_meeting(x, y, obj_wall))
+			{
+				crouching = false;
+			}//Go back to crouching mask index if we cant uncrouch
+			else{
+				mask_index = sprites.crouch;
+			}
+		}
+#endregion
+
 
 #region X Collision and Movement
 	//X Movement
 	move_dir = right_key - left_key;
-	x_spd = move_dir * move_spd[run_type];
+	//If crouching no movement open it if you want
+	//if(crouching) { move_dir = 0; }
+	var _move_spd_multiplier = crouching ? crouch_spd : move_spd[run_type];
+	
+	x_spd = move_dir * _move_spd_multiplier;
 	
 	if(run_key_check)
 	{
@@ -577,7 +616,8 @@ if(place_meeting(x,y, obj_wall))
 	crush_timer++;
 	if(crush_timer >= crush_death_time)
 	{
-		instance_destroy();
+		//destroy player
+		//instance_destroy();
 	}
 }
 else
@@ -597,6 +637,7 @@ else
 			case PLAYER_RUN_TYPE.RUN:
 				sprite_index = sprites.run;
 				break;
+
 			case PLAYER_RUN_TYPE.WALK:
 				//default is just walk so we dont break
 			default:
@@ -612,10 +653,17 @@ else
 	if (!on_ground) {
 		sprite_index = sprites.jump;
 	}
-	
+	//is crouching
+	if(crouching) { 
+		sprite_index = sprites.crouch;
+	}
 	
 	//set the collision mask
 	mask_index = sprites.idle;
+	if(crouching)
+	{
+		mask_index = sprites.crouch;
+	}
 #endregion
 
 

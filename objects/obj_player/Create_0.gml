@@ -49,6 +49,12 @@ function check_for_semi_solid_platform(_x, _y)
 	return _return_instance;
 }
 
+function is_crouching(){
+	if(run_type == PLAYER_RUN_TYPE.CROUCH)
+		return true;
+	
+	return false;
+}
 depth = -10;
 
 controls_setup();
@@ -68,6 +74,7 @@ sprites = {	idle: spr_player_idle, walk: spr_player_walk,
 	move_dir = 0;
 	move_spd[PLAYER_RUN_TYPE.WALK] = 2;
 	move_spd[PLAYER_RUN_TYPE.RUN] = 3.5;
+	crouch_spd = 1;
 	run_type = PLAYER_RUN_TYPE.WALK;
 	x_spd = 0;
 	y_spd = 0;
@@ -98,6 +105,11 @@ sprites = {	idle: spr_player_idle, walk: spr_player_walk,
 	
 #endregion
 
+#region State variables
+	crouching = false;
+
+#endregion
+
 //Pixel checks
 sub_pixel = .5;
 slope_pixel = 1;
@@ -112,7 +124,7 @@ slope_pixel = 1;
 #endregion
 
 crush_timer = 0;
-crush_death_time =5;
+crush_death_time = 5;
 
 
 
